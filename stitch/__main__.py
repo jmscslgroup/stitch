@@ -31,7 +31,7 @@ def get_args():
 
     resample.add_argument(
         "-i",
-        "--intput",
+        "--input",
         required=True,
         help="File to be resampled.",
     )

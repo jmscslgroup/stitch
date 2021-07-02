@@ -31,15 +31,15 @@ def get_args():
 
     resample.add_argument(
         "-i",
-        "--videoFileIn",
+        "--intput",
         required=True,
-        help="Input file name for video to be resampled.",
+        help="File to be resampled.",
     )
     resample.add_argument(
         "-o",
-        "--videoFileOut",
+        "--output",
         required=True,
-        help="Output file name for resampled video.",
+        help="Resampled output name.",
     )
 
     if len(sys.argv) == 1:

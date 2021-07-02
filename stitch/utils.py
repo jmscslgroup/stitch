@@ -10,12 +10,8 @@ def info(video):
     search = r"(\d{4}_\d{4}_\d{6})_(\d{3}).*"
     y_md_hms, index = re.search(search, name).groups()
     dt = datetime.datetime.strptime(y_md_hms, "%Y_%m%d_%H%M%S")
-    
-    res = {
-        "indexstr": index,
-        "index": int(index),
-        "dt": dt
-    }
+
+    res = {"indexstr": index, "index": int(index), "dt": dt}
     return res
 
 
@@ -24,8 +20,7 @@ def compare(vid1, vid2):
     info2 = info(vid2)
 
     if not (
-        info1["dt"].year == info2["dt"].year
-        and info1["dt"].month == info2["dt"].month
+        info1["dt"].year == info2["dt"].year and info1["dt"].month == info2["dt"].month
     ):
         return False
 
@@ -37,11 +32,14 @@ def compare(vid1, vid2):
     )
 
     probe = ffmpeg.probe(first_v)
-    vid_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
+    vid_stream = next(
+        (stream for stream in probe["streams"] if stream["codec_type"] == "video"), None
+    )
     first_dur = float(vid_stream["duration"])
     first_dur = datetime.timedelta(seconds=first_dur)
 
     return abs(((first_i["dt"] + first_dur) - second_i["dt"]).total_seconds()) < 5
+
 
 def create_name(drive):
     drive = sorted(drive)

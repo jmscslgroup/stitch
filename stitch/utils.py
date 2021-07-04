@@ -19,9 +19,11 @@ def compare(vid1, vid2):
     info1 = info(vid1)
     info2 = info(vid2)
 
-    if not (
-        info1["dt"].year == info2["dt"].year and info1["dt"].month == info2["dt"].month
-    ):
+    m1, m2 = info1["dt"].month, info2["dt"].month
+    y1, y2 = info1["dt"].year, info2["dt"].year
+    
+    # if the difference between the two videos is greater than 16 minutes, not in the same drive. Not checking 901 for tolerance
+    if abs((info1["dt"] - info2["dt"]).total_seconds()) > 960:
         return False
 
     first_v, first_i = (

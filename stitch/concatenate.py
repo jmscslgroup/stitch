@@ -1,8 +1,7 @@
 import ffmpeg
 import tempfile
 import os
-import argparse
-import sys
+
 import shutil
 
 
@@ -46,14 +45,15 @@ def trim_files(drives, outputfolder):
 
 def concatenate(files, output):
 
-    trimmed_dir = "trimmed_" + next(tempfile._get_candidate_names())
+    temp_id = next(tempfile._get_candidate_names())
+    trimmed_dir = f"trimmed_{temp_id}"
     os.mkdir(trimmed_dir)
 
     not_short_check(files)
 
     trimmed = trim_files(files, trimmed_dir)
 
-    videolist = f"drive_{next(tempfile._get_candidate_names())}.txt"
+    videolist = f"drive_{temp_id}.txt"
 
     # create temp file with names
     with open(videolist, "w") as tmp:

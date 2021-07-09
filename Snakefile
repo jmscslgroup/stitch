@@ -2,7 +2,6 @@ import os
 from stitch.utils import create_combinations, info
 
 config = {
-    "intermediate_dir": "snakemake-output",
     "resampled_dir": "resampled",
     "build_dir": "../../publishable-circles",
     "input_dir": "../../private-circles"
@@ -12,7 +11,7 @@ INPUT_DIR = config['input_dir']
 BUILD_DIR = config['build_dir']
 RESAMPLED_DIR = config['resampled_dir']
 
-VIDEOS = glob_wildcards(INPUT_DIR + "/{vin}/dashcams/{folder}/{year}_{monthday}_{time}_{index}.MP4")
+VIDEOS = glob_wildcards(INPUT_DIR + "/{vin,.{17}}/dashcams/{folder}/{year,.{4}}_{monthday,.{4}}_{time,.{6}}_{index,.{3}}.MP4")
 RAW = expand(INPUT_DIR + "/{vin}/dashcams/{folder}/{year}_{monthday}_{time}_{index}.MP4", zip, vin=VIDEOS.vin, folder=VIDEOS.folder, year=VIDEOS.year, monthday=VIDEOS.monthday, time=VIDEOS.time, index=VIDEOS.index)
 RESAMPLED = expand(RESAMPLED_DIR + "/{vin}/dashcams/{folder}/{year}_{monthday}_{time}_{index}_rs.mp4", zip, vin=VIDEOS.vin, folder=VIDEOS.folder, year=VIDEOS.year, monthday=VIDEOS.monthday, time=VIDEOS.time, index=VIDEOS.index)
 
@@ -45,3 +44,9 @@ rule concatenate:
         with_i = lambda w: " ".join([f"-i {i}" for i in outputs[f"{w.ymd}_{w.indices}.mp4"]])
     shell:
         "python -m stitch concatenate {params.with_i} -o {output}"
+        
+rule clean:
+    shell:
+        """
+        rm -rf {config[intermediate_dir]}
+        """

@@ -1,5 +1,6 @@
 import os
 from stitch.utils import create_combinations, info
+import ffmpeg
 
 config = {
     "resampled_dir": "resampled",
@@ -12,6 +13,21 @@ BUILD_DIR = config['build_dir']
 RESAMPLED_DIR = config['resampled_dir']
 
 VIDEOS = glob_wildcards(INPUT_DIR + "/{vin,.{17}}/dashcams/{folder}/{year,.{4}}_{monthday,.{4}}_{time,.{6}}_{index,.{3}}.MP4")
+PATHS = expand(INPUT_DIR + "/{vin}/dashcams/{folder}/{year}_{monthday}_{time}_{index}.MP4", zip, vin=VIDEOS.vin, folder=VIDEOS.folder, year=VIDEOS.year, monthday=VIDEOS.monthday, time=VIDEOS.time, index=VIDEOS.index)
+
+
+def remove_bad_videos(paths, remove_from):
+    for i, path in enumerate(paths):
+        try:
+            ffmpeg.probe(path)
+            continue
+        except:
+            for field in remove_from._fields:
+                del getattr(remove_from, field)[i]
+            i -= 1
+
+remove_bad_videos(PATHS, VIDEOS)
+
 RAW = expand(INPUT_DIR + "/{vin}/dashcams/{folder}/{year}_{monthday}_{time}_{index}.MP4", zip, vin=VIDEOS.vin, folder=VIDEOS.folder, year=VIDEOS.year, monthday=VIDEOS.monthday, time=VIDEOS.time, index=VIDEOS.index)
 RESAMPLED = expand(RESAMPLED_DIR + "/{vin}/dashcams/{folder}/{year}_{monthday}_{time}_{index}_rs.mp4", zip, vin=VIDEOS.vin, folder=VIDEOS.folder, year=VIDEOS.year, monthday=VIDEOS.monthday, time=VIDEOS.time, index=VIDEOS.index)
 

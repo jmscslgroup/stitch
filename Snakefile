@@ -17,14 +17,15 @@ PATHS = expand(INPUT_DIR + "/{vin}/dashcams/{folder}/{year}_{monthday}_{time}_{i
 
 
 def remove_bad_videos(paths, remove_from):
-    for i, path in enumerate(paths):
+    i = 0
+    for path in paths:
         try:
             ffmpeg.probe(path)
-            continue
         except:
             for field in remove_from._fields:
                 del getattr(remove_from, field)[i]
             i -= 1
+        i += 1
 
 remove_bad_videos(PATHS, VIDEOS)
 
@@ -64,5 +65,5 @@ rule concatenate:
 rule clean:
     shell:
         """
-        rm -rf {config[intermediate_dir]}
+        rm -rf {config[resampled_dir]}
         """
